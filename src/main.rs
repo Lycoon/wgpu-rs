@@ -1,29 +1,40 @@
-use winit::platform::windows::WindowBuilderExtWindows;
+mod render;
+
 use winit::{
-    event::{Event, WindowEvent},
+    event::*,
     event_loop::{ControlFlow, EventLoop},
-    window::{Theme, WindowBuilder},
+    window::WindowBuilder,
 };
 
-fn main() {
-    let event_loop: EventLoop<()> = EventLoop::new();
-
-    /* Window settings */
-    let _window = WindowBuilder::new()
+pub fn run() {
+    env_logger::init();
+    let event_loop = EventLoop::new();
+    let window = WindowBuilder::new()
         .with_title("Trunkee")
-        .with_theme(Some(Theme::Dark))
         .build(&event_loop)
         .unwrap();
-        
-    event_loop.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Wait;
 
-        match event {
-            Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
+    event_loop.run(move |event, _, control_flow| match event {
+        Event::WindowEvent {
+            ref event,
+            window_id,
+        } if window_id == window.id() => match event {
+            WindowEvent::CloseRequested
+            | WindowEvent::KeyboardInput {
+                input:
+                    KeyboardInput {
+                        state: ElementState::Pressed,
+                        virtual_keycode: Some(VirtualKeyCode::Escape),
+                        ..
+                    },
                 ..
             } => *control_flow = ControlFlow::Exit,
-            _ => (),
-        }
+            _ => {}
+        },
+        _ => {}
     });
+}
+
+fn main() {
+    run();
 }
