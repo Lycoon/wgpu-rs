@@ -2,6 +2,7 @@ mod render;
 
 use pollster::FutureExt;
 use render::window::State;
+use winit::dpi::PhysicalSize;
 
 use winit::{
     event::*,
@@ -14,6 +15,7 @@ pub async fn run() {
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
         .with_title("Trunkee")
+        .with_inner_size(PhysicalSize::new(1920, 1080))
         .build(&event_loop)
         .unwrap();
 
